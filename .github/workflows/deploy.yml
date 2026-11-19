@@ -1,27 +1,32 @@
 name: Deploy website
-on:
- push:
-   branches:[main]
 
+on:
+  push:
+   branches: [main]
+   
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 jobs:
   deploy:
-  runs-on: ubuntu-latest
-  permissions:
-   contents: read
-   pages: write
-   id-token: write
-
-  steps:
-  -name: ÇÓÍÈ ÇáßæÏ
-   uses: actions/checkout@v4
-
-  -name: ÌåÒ github pages
-   uses: actions/configure-pages@v5
-  
-  -name: ÇÑİÚ ÇáãáİÇÊ
-  uses: actions/upload-pages-artifact@v3
-  with:
-   path:'.'
-  -name: ÇäÔÑ ÇáãæŞÚ
-  uses: actions/deploy-pages@v4 
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps: 
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: setup pages
+        uses: actions/configure-pages@v5
+      - name: upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+      - name: Deploy to github pages
+        id: deployment
+        uses: actions/deploy-pages@v4 
      
